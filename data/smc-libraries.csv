@@ -1,43 +1,13 @@
-name,address,phone,longitude,latitude,geo_accuracy
-Atherton Library,"
-    3140 Woodside Road 
-    Woodside, CA 94062","
-    650.851.0147",-122.257048897959,37.4288816530612,house
-Belmont Library,"610 Elm Street, San Carlos, CA 94070","
-    650.591.0341",-122.26290443737,37.5048744748929,house
-Brisbane Library,"
-    765 Portola Road 
-    Portola Valley, CA 94028","
-    650.851.0560",-122.225040130689,37.3794925158982,house
-East Palo Alto Library,"
-    104 Hilton Way 
-    Pacifica, CA 94044","
-    650.355.5196",-122.492208982263,37.631990765314,house
-Foster City Library,"
-    1111 Terra Nova Boulevard 
-    Pacifica, CA 94044","
-    650.359.3397",-122.477301787648,37.5885774112162,house
-Half Moon Bay Library,"
-    1 Library Avenue 
-    Millbrae, CA 94030","
-    650.697.7607",-122.396422,37.603063,house
-Millbrae Library,"
-    620 Correas Street 
-    Half Moon Bay, CA 94019","
-    650.726.2316",-122.430208618725,37.4615830742753,house
-Pacifica Sanchez Library,"1000 East Hillsdale Boulevard, Foster City, CA 94404","
-    650.574.4842",-122.270821,37.559151,87
-Pacifica Sharp Park Library,"2415 University Avenue, East Palo Alto, CA 94303","
-    650.321.7712",-122.139572,37.473246,87
-Portola Valley Library,"
-    250 Visitacion Avenue 
-    Brisbane, CA 94005","
-    415.467.2060",-122.40379297886,37.6828032130851,library
-San Carlos Library,"
-    1110 Alameda de las Pulgas 
-    Belmont, CA 94002","
-    650.591.8286",-122.26536755102,37.4909158367347,house
-Woodside Library,"
-    2 Dinkelspiel Station Lane 
-    Atherton, CA 94027","
-    650.328.2422",-122.196267,37.463011,house
+"name","address","phone"
+"Atherton Library","2 Dinkelspiel Station Lane, Atherton, CA 94027","650.328.2422"
+"Belmont Library","1110 Alameda de las Pulgas, Belmont, CA 94002","650.591.8286"
+"Brisbane Library","250 Visitacion Avenue, Brisbane, CA 94005","415.467.2060"
+"East Palo Alto Library","2415 University Avenue, East, Palo Alto","650.321.7712"
+"Foster City Library","1000 East Hillsdale Boulevard, Foster, City CA","650.574.4842"
+"Half Moon Bay Library","620 Correas Street, Half, Moon Bay","650.726.2316"
+"Millbrae Library","1 Library Avenue, Millbrae, CA 94030","650.697.7607"
+"Pacifica Sanchez Library","1111 Terra Nova Boulevard, Pacifica, CA 94044","650.359.3397"
+"Pacifica Sharp Park Library","104 Hilton Way, Pacifica, CA 94044","650.355.5196"
+"Portola Valley Library","765 Portola Road, Portola, Valley CA","650.851.0560"
+"San Carlos Library","610 Elm Street, San, Carlos CA","650.591.0341"
+"Woodside Library","3140 Woodside Road, Woodside, CA 94062","650.851.0147"
