@@ -30,7 +30,7 @@ libraries.each do |library|
   rows << row
 end
  
-headers = [ :name, :address, :phone ]
+headers = rows.first.keys
 
 CSV.open("smc-libraries.csv", "wb", :force_quotes => true) do |csv|
   csv << headers
