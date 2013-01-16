@@ -1,6 +1,13 @@
 require 'open-uri'
 require 'nokogiri'
-require 'CSV'
+require 'geocoder'
+require 'csv'
+
+def get_lat_long(address)
+	result = Geocoder.coordinates(address)
+	@latitude = result[0]
+	@longitude = result[1]
+end
  
 ENDPOINT = "http://www.smcl.org/node/36"
  
@@ -21,18 +28,23 @@ libraries.each do |library|
   city, state, zip = result[2].scan(/\w+/)
   phone            = result[3].scan(/\d+/).join(".")
 
+  get_lat_long(address)
+  sleep(0.5)
+
   row = {
     name:    name,
     address: "#{address}, #{city}, #{state} #{zip}",
-    phone:   phone
+    phone:   phone,
+    longitude: @longitude,
+    latitude: @latitude
   }
 
   rows << row
 end
- 
-headers = [ :name, :address, :phone ]
 
-CSV.open("smc-libraries.csv", "wb", :force_quotes => true) do |csv|
+headers = rows.first.keys
+
+CSV.open("smc-libraries.csv", "wb") do |csv|
   csv << headers
   rows.map(&:values).each do |row|
     csv << row

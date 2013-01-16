@@ -1,13 +1,13 @@
-"name","address","phone"
-"Atherton Library","2 Dinkelspiel Station Lane, Atherton, CA 94027","650.328.2422"
-"Belmont Library","1110 Alameda de las Pulgas, Belmont, CA 94002","650.591.8286"
-"Brisbane Library","250 Visitacion Avenue, Brisbane, CA 94005","415.467.2060"
-"East Palo Alto Library","2415 University Avenue, East, Palo Alto","650.321.7712"
-"Foster City Library","1000 East Hillsdale Boulevard, Foster, City CA","650.574.4842"
-"Half Moon Bay Library","620 Correas Street, Half, Moon Bay","650.726.2316"
-"Millbrae Library","1 Library Avenue, Millbrae, CA 94030","650.697.7607"
-"Pacifica Sanchez Library","1111 Terra Nova Boulevard, Pacifica, CA 94044","650.359.3397"
-"Pacifica Sharp Park Library","104 Hilton Way, Pacifica, CA 94044","650.355.5196"
-"Portola Valley Library","765 Portola Road, Portola, Valley CA","650.851.0560"
-"San Carlos Library","610 Elm Street, San, Carlos CA","650.591.0341"
-"Woodside Library","3140 Woodside Road, Woodside, CA 94062","650.851.0147"
+name,address,phone,longitude,latitude
+Atherton Library,"2 Dinkelspiel Station Lane, Atherton, CA 94027",650.328.2422,-122.1967066,37.4633126
+Belmont Library,"1110 Alameda de las Pulgas, Belmont, CA 94002",650.591.8286,-122.2926159,37.5088658
+Brisbane Library,"250 Visitacion Avenue, Brisbane, CA 94005",415.467.2060,-122.4036187,37.68280439999999
+East Palo Alto Library,"2415 University Avenue, East, Palo Alto",650.321.7712,-117.1384989,32.748436
+Foster City Library,"1000 East Hillsdale Boulevard, Foster, City CA",650.574.4842,-122.270268,37.55878000000001
+Half Moon Bay Library,"620 Correas Street, Half, Moon Bay",650.726.2316,-122.430875,37.4615401
+Millbrae Library,"1 Library Avenue, Millbrae, CA 94030",650.697.7607,-72.6400929,40.8057
+Pacifica Sanchez Library,"1111 Terra Nova Boulevard, Pacifica, CA 94044",650.359.3397,-122.4768706,37.58610669999999
+Pacifica Sharp Park Library,"104 Hilton Way, Pacifica, CA 94044",650.355.5196,-122.4922133,37.6321489
+Portola Valley Library,"765 Portola Road, Portola, Valley CA",650.851.0560,-122.2289941,37.3819448
+San Carlos Library,"610 Elm Street, San, Carlos CA",650.591.0341,-71.4630815,42.9868944
+Woodside Library,"3140 Woodside Road, Woodside, CA 94062",650.851.0147,-122.2575811,37.428704
