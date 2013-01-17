@@ -23,6 +23,8 @@ var snaprmain = (function () {
 	var locationMarker = null;
 	var Circle = null;
 	var Map;
+	var spotLayer;
+	var defaultWhere;
 
 	
 	snaprmain.init = function()
@@ -78,12 +80,27 @@ var snaprmain = (function () {
 			zoom:11
 		});
 		
+		// Get today's date
+		var d = new Date();
+		var date = d.getDate();
+		//Months are zero based
+		var month = d.getMonth() + 1;
+		var year = d.getFullYear();
+		// Get seven days from today
+		var d7 = new Date(d);
+		d7.setDate(d7.getDate()+7);
+		var date7 = d7.getDate();
+		//Months are zero based
+		var month7 = d7.getMonth() + 1;
+		var year7 = d7.getFullYear();
+		// Google FT likes dot-based dates
+		defaultWhere = "Date >= '"+year +'.'+ (month<=9?'0'+month:month) +'.'+ (date<=9?'0'+date:date)+"'";
 		// Render the Flu shot clinic locations on the map
-		var spotLayer = new TkMapFusionLayer({
+		spotLayer = new TkMapFusionLayer({
 			geo:'Location',
 			map:Map.Map,
-			tableid:'5313521'/*,
-			where:defaultWhere*/
+			tableid:'5313521',
+			where:defaultWhere
 		});
 		var RendererOptions = {
 			suppressInfoWindows: true,
@@ -194,7 +211,7 @@ var snaprmain = (function () {
 		});
 		Map.Map.panToBounds(Circle.getBounds());
 		Map.Map.fitBounds(Circle.getBounds());
-		//spotLayer.showLayer({where:defaultWhere});
+		spotLayer.showLayer({where:defaultWhere});
 		_spotLayerListener();
 		
 		/*$('#grp-find').show(750);
