@@ -19,6 +19,7 @@ libraries = html.css("tbody tr")
 # retrieve only the second link in each table cell
 # the second link corresponds to the library's url
 rows = []
+days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
 libraries.each do |library|
   result           = library.text.split("\r\n").reject {|chunk| chunk.strip.empty? }.map(&:strip)
@@ -39,7 +40,18 @@ libraries.each do |library|
     latitude: @latitude
   }
 
+  i = 5
+  days.each do |day|
+    opens_at = result[i].split(" - ")[0]
+    closes_at = result[i].split(" - ")[1]
+
+    row["#{day} opens at"] = opens_at
+    row["#{day} closes at"] = closes_at
+    i += 2
+  end
+
   rows << row
+
 end
 
 headers = rows.first.keys
