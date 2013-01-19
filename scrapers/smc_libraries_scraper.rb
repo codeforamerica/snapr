@@ -2,56 +2,44 @@ require 'open-uri'
 require 'nokogiri'
 require 'geocoder'
 require 'csv'
+ 
+ENDPOINT = "http://plsinfo.org/library-hours/byletter".freeze
+ALPHABET = ("a".."z").to_a.freeze
 
-def get_lat_long(address)
-	result = Geocoder.coordinates(address)
-	@latitude = result[0]
-	@longitude = result[1]
-end
- 
-ENDPOINT = "http://www.smcl.org/node/36"
- 
-html = Nokogiri::HTML open(ENDPOINT)
- 
-# get all links in table cells with class = "location"
-libraries = html.css("tbody tr")
- 
-# retrieve only the second link in each table cell
-# the second link corresponds to the library's url
 rows = []
-days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 
-libraries.each do |library|
-  result           = library.text.split("\r\n").reject {|chunk| chunk.strip.empty? }.map(&:strip)
+ALPHABET.each do |letter|
+  html      = Nokogiri::HTML open("#{ENDPOINT.dup}/#{letter}")
+  libraries = html.css(".views-row")
+ 
+  libraries.each do |library|
+    name    = library.at_css(".views-field-title .field-content").text
+    street  = library.at_css(".street-address").text
+    city    = library.at_css(".locality").text
+    state   = library.at_css(".region").text
+    zip     = library.at_css(".postal-code").text
+    phone = library.css(".country-name")[1].text.split(":")[1]
+    
+    row = {
+      name:    name,
+      address: "#{street}, #{city}, #{state} #{zip}",
+      phone:   phone,
+    }
 
-  name             = result[0]
-  address          = result[1]
-  city, state, zip = result[2].scan(/\w+/)
-  phone            = result[3].scan(/\d+/).join(".")
+    i = 6
+    days.each do |day|
+      cells = library.css("td")
+      opens_at = [[cells.at(i), cells.at(i+1)].join(""), cells.at(i+2)].join(" ")
+      closes_at = [[cells.at(i+3), cells.at(i+4)].join(""), cells.at(i+5)].join(" ")
+      row["#{day} opens at"] = opens_at
+      row["#{day} closes at"] = closes_at
+      i += 8
+    end
 
-  get_lat_long(address)
-  sleep(0.5)
+    rows << row
 
-  row = {
-    name:    name,
-    address: "#{address}, #{city}, #{state} #{zip}",
-    phone:   phone,
-    longitude: @longitude,
-    latitude: @latitude
-  }
-
-  i = 5
-  days.each do |day|
-    opens_at = result[i].split(" - ")[0]
-    closes_at = result[i].split(" - ")[1]
-
-    row["#{day} opens at"] = opens_at
-    row["#{day} closes at"] = closes_at
-    i += 2
   end
-
-  rows << row
-
 end
 
 headers = rows.first.keys
