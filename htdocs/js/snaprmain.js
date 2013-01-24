@@ -17,9 +17,9 @@ var snaprmain = (function () {
 	var libcheck;
 	
 	var LOCATION_TYPES = [
-		{type: "library"},
-		{type: "hsa"},
-		{type: "food_bank"}
+		{type: "library" , icon: "small_yellow"},
+		{type: "hsa" , icon: "small_red"},
+		{type: "food_bank" , icon: "small_green"}
 	];
 	
 	// Google maps settings
@@ -127,14 +127,14 @@ var snaprmain = (function () {
 			geo:'address',
 			map:Map.Map,
 			tableid:'1JmSWj2Ak0OjFGjFpRySf3FE9SyAJjNcLt14lXUI',
-			where:'source = HSA'
+			where:"source = 'HSA'"
 		});
 		
 		foodBankLayer = new TkMapFusionLayer({
 			geo:'address',
 			map:Map.Map,
 			tableid:'1JmSWj2Ak0OjFGjFpRySf3FE9SyAJjNcLt14lXUI',
-			where:'source = Second Harvest Food Bank'
+			where:"source = 'Second Harvest Food Bank'"
 		});
 		
 		/*
@@ -300,13 +300,13 @@ var snaprmain = (function () {
 		switch(type)
 		{
 			case LOCATION_TYPES[0]:
-    			libraryLayer.showLayer({});
+    			libraryLayer.showLayer(/*{icon:LOCATION_TYPES[0].icon}*/);
     		break;
   			case LOCATION_TYPES[1]:
-				hsaLayer.showLayer({});
+				hsaLayer.showLayer(/*{icon:LOCATION_TYPES[1].icon}*/);
 			break;
   			case LOCATION_TYPES[2]:
-				foodBankLayer.showLayer({});
+				foodBankLayer.showLayer(/*{icon:LOCATION_TYPES[2].icon}*/);
 			break;
 		}
 	}
@@ -317,13 +317,13 @@ var snaprmain = (function () {
 		switch(type)
 		{
 			case LOCATION_TYPES[0]:
-    			libraryLayer.hideLayer({});
+    			libraryLayer.hideLayer();
     		break;
   			case LOCATION_TYPES[1]:
-				hsaLayer.hideLayer({});
+				hsaLayer.hideLayer();
 			break;
   			case LOCATION_TYPES[2]:
-				foodBankLayer.hideLayer({});
+				foodBankLayer.hideLayer();
 			break;
 		}
 	}
