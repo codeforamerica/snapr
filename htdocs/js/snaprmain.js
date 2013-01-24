@@ -23,7 +23,9 @@ var snaprmain = (function () {
 	var locationMarker = null;
 	var Circle = null;
 	var Map;
-	var spotLayer;
+	var libraryLayer;
+	var hsaLayer;
+	var foodBankLayer;
 	//var defaultWhere;
 
 	
@@ -66,6 +68,10 @@ var snaprmain = (function () {
 		
 		_initMap();
 		_initButtons();
+		
+		snaprmain.showLibraries();
+		snaprmain.showHSA();
+		snaprmain.showFoodBanks();
 	}
 	
 	function _initMap()
@@ -98,12 +104,28 @@ var snaprmain = (function () {
 		defaultWhere = "Date >= '"+year +'.'+ (month<=9?'0'+month:month) +'.'+ (date<=9?'0'+date:date)+"'";
 		*/
 		
-		// Render the locations on the map
-		spotLayer = new TkMapFusionLayer({
+		// Create map layers the locations on the map
+		libraryLayer = new TkMapFusionLayer({
 			geo:'Address',
 			map:Map.Map,
 			tableid:'1pt9ZLVYDZQqlwrQwZrvNDiDCSp5vhqBhv2sxyck'
 		});
+		
+		hsaLayer = new TkMapFusionLayer({
+			geo:'address',
+			map:Map.Map,
+			tableid:'1JmSWj2Ak0OjFGjFpRySf3FE9SyAJjNcLt14lXUI',
+			where:'source = HSA'
+		});
+		
+		foodBankLayer = new TkMapFusionLayer({
+			geo:'address',
+			map:Map.Map,
+			tableid:'1JmSWj2Ak0OjFGjFpRySf3FE9SyAJjNcLt14lXUI',
+			where:'source = Second Harvest Food Bank'
+		});
+		
+		/*
 		var RendererOptions = {
 			suppressInfoWindows: true,
 			polylineOptions: {
@@ -112,6 +134,7 @@ var snaprmain = (function () {
 				strokeOpacity: '0.85'
 			}
 		};
+		*/
 	}
 	
 	function _initButtons()
@@ -213,8 +236,9 @@ var snaprmain = (function () {
 		});
 		Map.Map.panToBounds(Circle.getBounds());
 		Map.Map.fitBounds(Circle.getBounds());
-		spotLayer.showLayer({});
-		_spotLayerListener();
+		//libraryLayer.showLayer({});
+		
+		_libraryLayerListener();
 		
 		/*$('#grp-find').show(750);
 		$('#grp-reset').show();
@@ -225,7 +249,7 @@ var snaprmain = (function () {
 	}
 	
 	// listen for clicks on the spots of interest
-	function _spotLayerListener()
+	function _libraryLayerListener()
 	{
 		
 	}
@@ -238,6 +262,36 @@ var snaprmain = (function () {
 			Map.Map.panToBounds(Circle.getBounds());
 			Map.Map.fitBounds(Circle.getBounds());
 		}
+	}
+	
+	snaprmain.showLibraries = function()
+	{
+		libraryLayer.showLayer({});
+	}
+	
+	snaprmain.hideLibraries = function()
+	{
+		libraryLayer.hideLayer({});
+	}
+	
+	snaprmain.showHSA = function()
+	{
+		hsaLayer.showLayer({});
+	}
+	
+	snaprmain.hideHSA = function()
+	{
+		hsaLayer.hideLayer({});
+	}
+
+	snaprmain.showFoodBanks = function()
+	{
+		foodBankLayer.showLayer({});
+	}
+	
+	snaprmain.hideFoodBanks = function()
+	{
+		foodBankLayer.hideLayer({});
 	}
 
 // return internally scoped snaprmain var as value of globally scoped snaprmain object

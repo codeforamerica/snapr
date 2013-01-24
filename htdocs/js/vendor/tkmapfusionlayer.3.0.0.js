@@ -65,9 +65,7 @@ function TkMapFusionLayer(Args)
 			this.Layer = new google.maps.FusionTablesLayer({
 				clickable : true,
 				query: Query
-			});
-			
-			console.log(this.Layer);
+			});			
 		}
 		this.Layer.setMap(Map);
 	};
@@ -78,8 +76,12 @@ function TkMapFusionLayer(Args)
 			this.Layer.setMap(null);
 		}
 	};
+	
+	/*
+	// uncomment to show the map immediately upon instantiation
 	if (Map !== null && Geo !== null && TableId !== null)
 	{
 		this.showLayer({});
 	}
+	*/
 }
