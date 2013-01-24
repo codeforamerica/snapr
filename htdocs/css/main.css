@@ -171,9 +171,28 @@ html,body{
 }
 
 
+#checkboxes
+{
+	font-size: 12px;
+	margin-top: 10px;
+	font-weight: bold;
+	float:right;
+	margin-right: 20px;
+	padding-left: 10px;
+	border-left: 1px solid #CB0;
+}
 
+#checkboxes label
+{
+	margin-left:20px;
+	margin-right:5px;
+	font-weight: normal;
+}
 
-
+#checkboxes label, #checkboxes input
+{
+	cursor:pointer;
+}
 
 
 

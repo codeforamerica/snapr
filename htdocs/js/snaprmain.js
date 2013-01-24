@@ -12,6 +12,15 @@ var snaprmain = (function () {
 	var location;
 	var mapWrapper;
 	var addressButton;
+	var foodbankcheck;
+	var hsacheck;
+	var libcheck;
+	
+	var LOCATION_TYPES = [
+		{type: "library"},
+		{type: "hsa"},
+		{type: "food_bank"}
+	];
 	
 	// Google maps settings
 	// lat/long settings
@@ -37,6 +46,9 @@ var snaprmain = (function () {
 		location = document.getElementById("location");
 		mapWrapper = document.getElementById("map-wrapper");
 		addressButton = document.getElementById("address-button");
+		foodbankcheck = document.getElementById( "foodbankcheck" );
+		hsacheck = document.getElementById( "hsacheck" );
+		libcheck = document.getElementById( "libcheck" );
 		
 		_onResize();
 		window.addEventListener("resize", _onResize );
@@ -69,9 +81,9 @@ var snaprmain = (function () {
 		_initMap();
 		_initButtons();
 		
-		snaprmain.showLibraries();
-		snaprmain.showHSA();
-		snaprmain.showFoodBanks();
+		snaprmain.showLayer(LOCATION_TYPES[0]);
+		snaprmain.showLayer(LOCATION_TYPES[1]);
+		snaprmain.showLayer(LOCATION_TYPES[2]);
 	}
 	
 	function _initMap()
@@ -139,7 +151,10 @@ var snaprmain = (function () {
 	
 	function _initButtons()
 	{
-		addressButton.addEventListener( "mousedown" , _setLocationQuery );
+		addressButton.addEventListener( "mousedown" , _setLocationQuery , false );
+		foodbankcheck.addEventListener( "click" , _checkFoodBankCheck , false );
+		hsacheck.addEventListener( "click" , _checkHSACheck , false );
+		libcheck.addEventListener( "click" , _checkLibCheck , false );
 	}
 	
 	function _setLocationQuery()
@@ -264,34 +279,53 @@ var snaprmain = (function () {
 		}
 	}
 	
-	snaprmain.showLibraries = function()
+	function _checkLibCheck()
 	{
-		libraryLayer.showLayer({});
+		 libcheck.checked ? snaprmain.showLayer(LOCATION_TYPES[0]) : snaprmain.hideLayer(LOCATION_TYPES[0]);
 	}
 	
-	snaprmain.hideLibraries = function()
+	function _checkHSACheck()
 	{
-		libraryLayer.hideLayer({});
-	}
-	
-	snaprmain.showHSA = function()
-	{
-		hsaLayer.showLayer({});
-	}
-	
-	snaprmain.hideHSA = function()
-	{
-		hsaLayer.hideLayer({});
+		hsacheck.checked ? snaprmain.showLayer(LOCATION_TYPES[1]) : snaprmain.hideLayer(LOCATION_TYPES[1]);
 	}
 
-	snaprmain.showFoodBanks = function()
+	function _checkFoodBankCheck()
 	{
-		foodBankLayer.showLayer({});
+		foodbankcheck.checked ? snaprmain.showLayer(LOCATION_TYPES[2]) : snaprmain.hideLayer(LOCATION_TYPES[2]);
 	}
 	
-	snaprmain.hideFoodBanks = function()
+	snaprmain.showLayer = function(type)
 	{
-		foodBankLayer.hideLayer({});
+		//console.log( "showing type..." , type );
+		switch(type)
+		{
+			case LOCATION_TYPES[0]:
+    			libraryLayer.showLayer({});
+    		break;
+  			case LOCATION_TYPES[1]:
+				hsaLayer.showLayer({});
+			break;
+  			case LOCATION_TYPES[2]:
+				foodBankLayer.showLayer({});
+			break;
+		}
+	}
+	
+	snaprmain.hideLayer = function(type)
+	{
+		//console.log( "hiding type..." , type );
+		switch(type)
+		{
+			case LOCATION_TYPES[0]:
+    			libraryLayer.hideLayer({});
+    		break;
+  			case LOCATION_TYPES[1]:
+				hsaLayer.hideLayer({});
+			break;
+  			case LOCATION_TYPES[2]:
+				foodBankLayer.hideLayer({});
+			break;
+		}
 	}
 
 // return internally scoped snaprmain var as value of globally scoped snaprmain object
