@@ -66,6 +66,8 @@ function TkMapFusionLayer(Args)
 				clickable : true,
 				query: Query
 			});
+			
+			console.log(this.Layer);
 		}
 		this.Layer.setMap(Map);
 	};
