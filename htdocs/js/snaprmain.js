@@ -300,13 +300,13 @@ var snaprmain = (function () {
 		switch(type)
 		{
 			case LOCATION_TYPES[0]:
-    			libraryLayer.showLayer(/*{icon:LOCATION_TYPES[0].icon}*/);
+    			libraryLayer.showLayer({icon:LOCATION_TYPES[0].icon});
     		break;
   			case LOCATION_TYPES[1]:
-				hsaLayer.showLayer(/*{icon:LOCATION_TYPES[1].icon}*/);
+				hsaLayer.showLayer({icon:LOCATION_TYPES[1].icon});
 			break;
   			case LOCATION_TYPES[2]:
-				foodBankLayer.showLayer(/*{icon:LOCATION_TYPES[2].icon}*/);
+				foodBankLayer.showLayer({icon:LOCATION_TYPES[2].icon});
 			break;
 		}
 	}
