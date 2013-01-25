@@ -50,6 +50,7 @@ function TkMapFusionLayer(Args)
 			this.Layer = new google.maps.FusionTablesLayer({
 				clickable : true,
 				query: Query,
+				suppressInfoWindows: true,
 				styles: [{
 					markerOptions: { iconName: showIcon }
 				}]
@@ -60,6 +61,7 @@ function TkMapFusionLayer(Args)
 			this.Layer = new google.maps.FusionTablesLayer({
 				clickable : true,
 				query: Query,
+				suppressInfoWindows: true,
 				styles: showStyle
 			});
 		}
@@ -67,7 +69,8 @@ function TkMapFusionLayer(Args)
 		{
 			this.Layer = new google.maps.FusionTablesLayer({
 				clickable : true,
-				query: Query
+				query: Query,
+				suppressInfoWindows: true
 			});			
 		}
 		

@@ -170,7 +170,6 @@ var snaprmain = (function () {
 	
 	// Open the info window at the clicked location
 	function _windowControl(e, infoWindow, map) {
-		console.log("here");
 		infoWindow.setOptions({
 		content: e.infoWindowHtml,
 		position: e.latLng,
