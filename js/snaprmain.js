@@ -17,9 +17,9 @@ var snaprmain = (function () {
 	var libcheck;
 	
 	var LOCATION_TYPES = [
-		{type: "library" , icon: "small_yellow"},
-		{type: "hsa" , icon: "small_red"},
-		{type: "food_bank" , icon: "small_green"}
+		{type: "library" , icon: "yellow"},
+		{type: "hsa" , icon: "red"},
+		{type: "food_bank" , icon: "green"}
 	];
 	
 	// Google maps settings
