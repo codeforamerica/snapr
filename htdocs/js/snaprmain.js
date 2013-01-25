@@ -121,21 +121,21 @@ var snaprmain = (function () {
 			geo:'address',
 			map:Map.Map,
 			tableid:'1ZgxF1WxZtsawkLUmrXEgL1XR1WnSWtLBoNSEsf4',
-			where:"source == 'Library'"
+			where:"Source='Library'"
 		});
 		
 		hsaLayer = new TkMapFusionLayer({
 			geo:'address',
 			map:Map.Map,
 			tableid:'1ZgxF1WxZtsawkLUmrXEgL1XR1WnSWtLBoNSEsf4',
-			where:"source == 'HSA'"
+			where:"Source='HSA'"
 		});
 		
 		foodBankLayer = new TkMapFusionLayer({
 			geo:'address',
 			map:Map.Map,
 			tableid:'1ZgxF1WxZtsawkLUmrXEgL1XR1WnSWtLBoNSEsf4',
-			where:"source == 'Second Harvest Food Bank'"
+			where:"Source='Second Harvest Food Bank'"
 		});
 		
 		google.maps.event.addListener(libraryLayer, 'click', function(e) {
