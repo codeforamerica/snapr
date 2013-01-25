@@ -171,13 +171,23 @@ var snaprmain = (function () {
 	// Open the info window at the clicked location
 	function _windowControl(e, infoWindow, map) {
 		infoWindow.setOptions({
-		content: e.infoWindowHtml,
+		content: _formatInfoWindow(e.row),
 		position: e.latLng,
 		pixelOffset: e.pixelOffset
 		});
 		infoWindow.open(map);
 	}
 
+	function _formatInfoWindow(rows)
+	{	
+		var html = "";
+		for (var row in rows)
+		{
+			html += "<div>" + row + " : " + rows[row].value + "</div>";
+		}
+		
+		return html;
+	}
 	
 	function _initButtons()
 	{
