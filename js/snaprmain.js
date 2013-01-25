@@ -191,6 +191,7 @@ var snaprmain = (function () {
 	
 	function _initButtons()
 	{
+		location.addEventListener( "keypress" , _submitWithReturnKey , false );
 		addressButton.addEventListener( "mousedown" , _setLocationQuery , false );
 		foodbankcheck.addEventListener( "click" , _checkFoodBankCheck , false );
 		hsacheck.addEventListener( "click" , _checkHSACheck , false );
@@ -235,6 +236,15 @@ var snaprmain = (function () {
 				}
 			);
 		}
+	}
+
+	function _submitWithReturnKey(event) 
+	{
+    if( event.keyCode == 13 )
+    {
+      _setLocationQuery();
+      location.blur();
+    }
 	}
 	
 	function _addressError()
