@@ -120,6 +120,7 @@ var snaprmain = (function () {
 		libraryLayer = new TkMapFusionLayer({
 			geo:'address',
 			map:Map.Map,
+			suppressInfoWindows: true,
 			tableid:'1ZgxF1WxZtsawkLUmrXEgL1XR1WnSWtLBoNSEsf4',
 			where:"Source='Library'"
 		});
@@ -127,6 +128,7 @@ var snaprmain = (function () {
 		hsaLayer = new TkMapFusionLayer({
 			geo:'address',
 			map:Map.Map,
+			suppressInfoWindows: true,
 			tableid:'1ZgxF1WxZtsawkLUmrXEgL1XR1WnSWtLBoNSEsf4',
 			where:"Source='HSA'"
 		});
@@ -134,19 +136,23 @@ var snaprmain = (function () {
 		foodBankLayer = new TkMapFusionLayer({
 			geo:'address',
 			map:Map.Map,
+			suppressInfoWindows: true,
 			tableid:'1ZgxF1WxZtsawkLUmrXEgL1XR1WnSWtLBoNSEsf4',
 			where:"Source='Second Harvest Food Bank'"
 		});
 		
-		google.maps.event.addListener(libraryLayer, 'click', function(e) {
+		
+		var infoWindow = new google.maps.InfoWindow();
+		 
+		google.maps.event.addListener(libraryLayer.Layer, 'click', function(e) {
           _windowControl(e, infoWindow, Map.Map);
         });
         
-        google.maps.event.addListener(hsaLayer, 'click', function(e) {
+        google.maps.event.addListener(hsaLayer.Layer, 'click', function(e) {
           _windowControl(e, infoWindow, Map.Map);
         });
         
-        google.maps.event.addListener(foodBankLayer, 'click', function(e) {
+        google.maps.event.addListener(foodBankLayer.Layer, 'click', function(e) {
           _windowControl(e, infoWindow, Map.Map);
         });
 		
@@ -164,6 +170,7 @@ var snaprmain = (function () {
 	
 	// Open the info window at the clicked location
 	function _windowControl(e, infoWindow, map) {
+		console.log("here");
 		infoWindow.setOptions({
 		content: e.infoWindowHtml,
 		position: e.latLng,
