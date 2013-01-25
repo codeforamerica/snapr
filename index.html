@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+
+        <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+
+		<link href='http://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" href="css/normalize.css">
+        <link rel="stylesheet" href="css/main.css">
+        <script src="js/vendor/modernizr-2.6.2.min.js"></script>
+        <script>
+        	
+        	document.addEventListener("DOMContentLoaded", function() {
+        		snaprmain.init();
+			});
+        	
+        </script>
+    </head>
+    <body>
+    
+		<section id="outer-content">
+			<section id="overlay"><p>locating...</p></section>
+			<section id="message"></section>
+			<section id="search">
+				<div id="checkboxes">SHOW: 
+					<div><input id="foodbankcheck" type="checkbox" checked /><label for="foodbankcheck">Food Banks</label></div>
+					<div><input id="hsacheck" type="checkbox" checked /><label for="hsacheck">Human Services Agencies</label></div>
+					<div><input id="libcheck" type="checkbox" checked /><label for="libcheck">Libraries</label></div>
+				</div>
+				<div><span id="logo">SNAPR</span> Find by address... </div><div><input id="location" type="text" placeholder="Enter an address" />
+				<button id="address-button">Go!</button></div>
+			</section>
+			<section id="map-wrapper"><div id="map-canvas">Google Map Failed to Load!</div></section>
+		</section>
+		
+			<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+			<script>window.jQuery || document.write('<script src="js/vendor/jquery-1.8.3.min.js"><\/script>')</script>
+			<script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyC2rkDShPI8s2L5vTGYUd8Y0brovGo7kQo&sensor=true" type="text/javascript"></script>
+			<script src="js/geo.js"></script>
+			<script src="js/vendor/tkmap.4.0.0.js"></script>
+			<script src="js/vendor/tkmapfusionlayer.3.0.0.js"></script>
+			<script src="js/plugins.js"></script>
+			<script src="js/snaprmain.js"></script>
+	
+			<!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
+			<script>
+				var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
+				(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+				g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+				s.parentNode.insertBefore(g,s)}(document,'script'));
+			</script>
+			
+
+
+    </body>
+</html>
