@@ -118,24 +118,37 @@ var snaprmain = (function () {
 		
 		// Create map layers the locations on the map
 		libraryLayer = new TkMapFusionLayer({
-			geo:'Address',
+			geo:'address',
 			map:Map.Map,
-			tableid:'1pt9ZLVYDZQqlwrQwZrvNDiDCSp5vhqBhv2sxyck'
+			tableid:'1ZgxF1WxZtsawkLUmrXEgL1XR1WnSWtLBoNSEsf4',
+			where:"source == 'Library'"
 		});
 		
 		hsaLayer = new TkMapFusionLayer({
 			geo:'address',
 			map:Map.Map,
-			tableid:'1JmSWj2Ak0OjFGjFpRySf3FE9SyAJjNcLt14lXUI',
-			where:"source = 'HSA'"
+			tableid:'1ZgxF1WxZtsawkLUmrXEgL1XR1WnSWtLBoNSEsf4',
+			where:"source == 'HSA'"
 		});
 		
 		foodBankLayer = new TkMapFusionLayer({
 			geo:'address',
 			map:Map.Map,
-			tableid:'1JmSWj2Ak0OjFGjFpRySf3FE9SyAJjNcLt14lXUI',
-			where:"source = 'Second Harvest Food Bank'"
+			tableid:'1ZgxF1WxZtsawkLUmrXEgL1XR1WnSWtLBoNSEsf4',
+			where:"source == 'Second Harvest Food Bank'"
 		});
+		
+		google.maps.event.addListener(libraryLayer, 'click', function(e) {
+          _windowControl(e, infoWindow, Map.Map);
+        });
+        
+        google.maps.event.addListener(hsaLayer, 'click', function(e) {
+          _windowControl(e, infoWindow, Map.Map);
+        });
+        
+        google.maps.event.addListener(foodBankLayer, 'click', function(e) {
+          _windowControl(e, infoWindow, Map.Map);
+        });
 		
 		/*
 		var RendererOptions = {
@@ -148,6 +161,17 @@ var snaprmain = (function () {
 		};
 		*/
 	}
+	
+	// Open the info window at the clicked location
+	function _windowControl(e, infoWindow, map) {
+		infoWindow.setOptions({
+		content: e.infoWindowHtml,
+		position: e.latLng,
+		pixelOffset: e.pixelOffset
+		});
+		infoWindow.open(map);
+	}
+
 	
 	function _initButtons()
 	{
