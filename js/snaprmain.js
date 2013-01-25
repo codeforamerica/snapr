@@ -17,9 +17,9 @@ var snaprmain = (function () {
 	var libcheck;
 	
 	var LOCATION_TYPES = [
-		{type: "library" , icon: "yellow"},
-		{type: "hsa" , icon: "red"},
-		{type: "food_bank" , icon: "green"}
+		{type: "library" , icon: "small_yellow"},
+		{type: "hsa" , icon: "small_red"},
+		{type: "food_bank" , icon: "small_green"}
 	];
 	
 	// Google maps settings
@@ -118,24 +118,43 @@ var snaprmain = (function () {
 		
 		// Create map layers the locations on the map
 		libraryLayer = new TkMapFusionLayer({
-			geo:'Address',
+			geo:'address',
 			map:Map.Map,
-			tableid:'1pt9ZLVYDZQqlwrQwZrvNDiDCSp5vhqBhv2sxyck'
+			icon:LOCATION_TYPES[0].icon,
+			tableid:'1ZgxF1WxZtsawkLUmrXEgL1XR1WnSWtLBoNSEsf4',
+			where:"Source='Library'"
 		});
 		
 		hsaLayer = new TkMapFusionLayer({
 			geo:'address',
 			map:Map.Map,
-			tableid:'1JmSWj2Ak0OjFGjFpRySf3FE9SyAJjNcLt14lXUI',
-			where:"source = 'HSA'"
+			icon:LOCATION_TYPES[1].icon,
+			tableid:'1ZgxF1WxZtsawkLUmrXEgL1XR1WnSWtLBoNSEsf4',
+			where:"Source='HSA'"
 		});
 		
 		foodBankLayer = new TkMapFusionLayer({
 			geo:'address',
 			map:Map.Map,
-			tableid:'1JmSWj2Ak0OjFGjFpRySf3FE9SyAJjNcLt14lXUI',
-			where:"source = 'Second Harvest Food Bank'"
+			icon:LOCATION_TYPES[2].icon,
+			tableid:'1ZgxF1WxZtsawkLUmrXEgL1XR1WnSWtLBoNSEsf4',
+			where:"Source='Second Harvest Food Bank'"
 		});
+		
+		
+		var infoWindow = new google.maps.InfoWindow();
+		 
+		google.maps.event.addListener(libraryLayer.Layer, 'click', function(e) {
+          _windowControl(e, infoWindow, Map.Map);
+        });
+        
+        google.maps.event.addListener(hsaLayer.Layer, 'click', function(e) {
+          _windowControl(e, infoWindow, Map.Map);
+        });
+        
+        google.maps.event.addListener(foodBankLayer.Layer, 'click', function(e) {
+          _windowControl(e, infoWindow, Map.Map);
+        });
 		
 		/*
 		var RendererOptions = {
@@ -147,6 +166,27 @@ var snaprmain = (function () {
 			}
 		};
 		*/
+	}
+	
+	// Open the info window at the clicked location
+	function _windowControl(e, infoWindow, map) {
+		infoWindow.setOptions({
+		content: _formatInfoWindow(e.row),
+		position: e.latLng,
+		pixelOffset: e.pixelOffset
+		});
+		infoWindow.open(map);
+	}
+
+	function _formatInfoWindow(rows)
+	{	
+		var html = "";
+		for (var row in rows)
+		{
+			html += "<div>" + row + " : " + rows[row].value + "</div>";
+		}
+		
+		return html;
 	}
 	
 	function _initButtons()
@@ -300,13 +340,13 @@ var snaprmain = (function () {
 		switch(type)
 		{
 			case LOCATION_TYPES[0]:
-    			libraryLayer.showLayer({icon:LOCATION_TYPES[0].icon});
+    			libraryLayer.showLayer();
     		break;
   			case LOCATION_TYPES[1]:
-				hsaLayer.showLayer({icon:LOCATION_TYPES[1].icon});
+				hsaLayer.showLayer();
 			break;
   			case LOCATION_TYPES[2]:
-				foodBankLayer.showLayer({icon:LOCATION_TYPES[2].icon});
+				foodBankLayer.showLayer();
 			break;
 		}
 	}

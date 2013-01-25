@@ -18,14 +18,17 @@ function TkMapFusionLayer(Args)
 	// Default public properties
 	this.Layer = null;
 	/* METHODS *****************************************************************/
-	this.showLayer = function(Args)
+	
+	this.init = function(Args)
 	{
 		// Set properties from arguments
 		var showWhere = typeof Args.where !== 'undefined' ? Args.where : Where;
 		var showIcon = typeof Args.icon !== 'undefined' ? Args.icon : Icon;
 		var showStyle = typeof Args.linestyle !== 'undefined' ? Args.style : Style;
+		
 		// Hide the layer
-		this.hideLayer();
+		//this.hideLayer();
+		
 		// Am I displaying a search result?
 		var Query = null;
 		if (showWhere === null) {
@@ -47,6 +50,7 @@ function TkMapFusionLayer(Args)
 			this.Layer = new google.maps.FusionTablesLayer({
 				clickable : true,
 				query: Query,
+				suppressInfoWindows: true,
 				styles: [{
 					markerOptions: { iconName: showIcon }
 				}]
@@ -57,6 +61,7 @@ function TkMapFusionLayer(Args)
 			this.Layer = new google.maps.FusionTablesLayer({
 				clickable : true,
 				query: Query,
+				suppressInfoWindows: true,
 				styles: showStyle
 			});
 		}
@@ -64,11 +69,18 @@ function TkMapFusionLayer(Args)
 		{
 			this.Layer = new google.maps.FusionTablesLayer({
 				clickable : true,
-				query: Query
+				query: Query,
+				suppressInfoWindows: true
 			});			
 		}
-		this.Layer.setMap(Map);
+		
 	};
+	
+	this.showLayer = function()
+	{
+		this.Layer.setMap(Map);
+	}
+	
 	this.hideLayer = function()
 	{
 		if (this.Layer !== null)
@@ -77,11 +89,9 @@ function TkMapFusionLayer(Args)
 		}
 	};
 	
-	/*
 	// uncomment to show the map immediately upon instantiation
 	if (Map !== null && Geo !== null && TableId !== null)
 	{
-		this.showLayer({});
+		this.init(Args);
 	}
-	*/
 }
