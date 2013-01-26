@@ -2,6 +2,12 @@ require 'open-uri'
 require 'nokogiri'
 require 'geocoder'
 require 'csv'
+
+def get_lat_long(address)
+  result = Geocoder.coordinates(address)
+  @latitude = result[0]
+  @longitude = result[1]
+end
  
 ENDPOINT = "http://plsinfo.org/library-hours/byletter".freeze
 ALPHABET = ("a".."z").to_a.freeze
@@ -20,11 +26,17 @@ ALPHABET.each do |letter|
     state   = library.at_css(".region").text
     zip     = library.at_css(".postal-code").text
     phone = library.css(".country-name")[1].text.split(":")[1]
+
+    address = "#{street}, #{city}, #{state} #{zip}"
+
+    get_lat_long(address)
+    sleep(0.5)
     
     row = {
       name:    name,
       address: "#{street}, #{city}, #{state} #{zip}",
       phone:   phone,
+      location: "#{@longitude},#{@latitude}"
     }
 
     i = 6
@@ -36,6 +48,8 @@ ALPHABET.each do |letter|
       row["#{day} closes at"] = closes_at
       i += 8
     end
+
+    row["Source"] = "Library"
 
     rows << row
 
