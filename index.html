@@ -16,13 +16,8 @@
 		<link rel="stylesheet" href="css/normalize.css">
         <link rel="stylesheet" href="css/main.css">
         <script src="js/vendor/modernizr-2.6.2.min.js"></script>
-        <script>
-        	
-        	document.addEventListener("DOMContentLoaded", function() {
-        		snaprmain.init();
-			});
-        	
-        </script>
+        <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+        
     </head>
     <body>
     
@@ -35,8 +30,9 @@
 					<div><input id="hsacheck" type="checkbox" checked /><label for="hsacheck">Human Services Agencies</label></div>
 					<div><input id="libcheck" type="checkbox" checked /><label for="libcheck">Libraries</label></div>
 				</div>
-				<div><span id="logo">SNAPR</span> Find by address... </div><div><input id="location" type="text" placeholder="Enter an address" />
+				<div id="title-area"><div id="logo"></div><div id="search-area"><div> Find nearby SNAP enrollment locations... </div><div><input id="location" type="text" placeholder="Enter an address" />
 				<button id="address-button">Go!</button></div>
+				<div>Use <a href="#" id="find-current">Current Location</a></div></div>
 			</section>
 			<section id="map-wrapper"><div id="map-canvas">Google Map Failed to Load!</div></section>
 		</section>
@@ -44,11 +40,23 @@
 			<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 			<script>window.jQuery || document.write('<script src="js/vendor/jquery-1.8.3.min.js"><\/script>')</script>
 			<script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyC2rkDShPI8s2L5vTGYUd8Y0brovGo7kQo&sensor=true" type="text/javascript"></script>
-			<script src="js/geo.js"></script>
+		    <script src="js/geo.js"></script>
 			<script src="js/vendor/tkmap.4.0.0.js"></script>
 			<script src="js/vendor/tkmapfusionlayer.3.0.0.js"></script>
 			<script src="js/plugins.js"></script>
 			<script src="js/snaprmain.js"></script>
+	
+			<script>
+			google.load('visualization', '1');
+			
+			google.maps.event.addDomListener(window, 'load', snaprmain.init);
+			
+			/*
+				document.addEventListener("DOMContentLoaded", function() {
+					snaprmain.init();
+				});
+			*/	
+			</script>
 	
 			<!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
 			<script>

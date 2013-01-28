@@ -153,7 +153,7 @@ html,body{
 
 #search
 {
-	font-size:24px;
+	font-size:14px;
 	padding:10px;
 	height:98px;
 	border-bottom: 2px solid #CB0;
@@ -162,14 +162,33 @@ html,body{
 #location
 {
 	padding:5px;
+	width:300px;
+
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+}
+
+#title-area
+{
+	margin-top:20px;
+	margin-left:10px;
 }
 
 #logo
 {
-	color:#4EB55A;
-	font-weight:bold;
+	display:block;
+	background:url("../images/logo.png");
+	width:148px;
+	height:40px;
+	float:left;
+	margin-top:4px;
 }
 
+#search-area
+{
+	margin-left:160px;
+}
 
 #checkboxes
 {
@@ -192,6 +211,22 @@ html,body{
 #checkboxes label, #checkboxes input
 {
 	cursor:pointer;
+}
+
+button
+{
+	border-top:		2px solid #a3ceda;
+	border-left:		2px solid #a3ceda;
+	border-right:		2px solid #4f6267;
+	border-bottom:		2px solid #4f6267;
+	font-size:		14px !important;
+	background-color:	#82aa3f;
+	font-weight:		bold;
+	color:			#fff;
+	
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
 }
 
 

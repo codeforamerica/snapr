@@ -15,6 +15,7 @@ var snaprmain = (function () {
 	var foodbankcheck;
 	var hsacheck;
 	var libcheck;
+	var currLocation;
 	
 	var LOCATION_TYPES = [
 		{type: "library" , icon: "yellow"},
@@ -29,17 +30,25 @@ var snaprmain = (function () {
 	var defaultLat = 37.485215;
 	var defaultLng = -122.236355;
 	
+	// routing variables
+	var directionsDisplay;
+	
+	// arrays of markers
+	var libraryMarkers = [];
+	var hsaMarkers = [];
+	var foodbankMarkers = [];
+	
+	var infoWindow;
 	var locationMarker = null;
 	var Circle = null;
 	var Map;
 	var libraryLayer;
 	var hsaLayer;
 	var foodBankLayer;
-	//var defaultWhere;
 
 	
 	snaprmain.init = function()
-	{
+	{	
 		// init HTML references
 		overlay = document.getElementById("overlay");
 		message = document.getElementById("message");
@@ -49,17 +58,98 @@ var snaprmain = (function () {
 		foodbankcheck = document.getElementById( "foodbankcheck" );
 		hsacheck = document.getElementById( "hsacheck" );
 		libcheck = document.getElementById( "libcheck" );
+		currLocation = document.getElementById( "find-current" );
+		
+		_initMap();
+		_initDataSources();
+		_locateUser();
+		_initButtons();
 		
 		_onResize();
 		window.addEventListener("resize", _onResize );
-		
+	}
+	
+	// initialize the Google map
+	function _initMap()
+	{
+		// Render the map
+		Map = new TkMap({
+			domid:'map-canvas',
+			init:true,
+			lat:defaultLat,
+			lng:defaultLng,
+			styles:'grey',
+			zoom:11
+		});
+	}
+	
+	// initialize the markers
+	function _initDataSources()
+	{
+        // Send query to Google Chart Tools to get data from table.
+        // Note: the Chart Tools API returns up to 500 rows.
+        var libquery = "SELECT "+
+        			"name, "+
+        			"address, "+
+        			"phone, location,"+
+        			"'Sunday opens at',"+
+        			"'Sunday closes at',"+
+        			"'Monday opens at',"+
+        			"'Monday closes at',"+
+        			"'Tuesday opens at',"+
+        			"'Tuesday closes at',"+
+        			"'Wednesday opens at',"+
+        			"'Wednesday closes at',"+
+        			"'Thursday opens at',"+
+        			"'Thursday closes at',"+
+        			"'Friday opens at',"+
+        			"'Friday closes at',"+
+        			"'Saturday opens at',"+
+        			"'Saturday closes at',"+
+        			"Source"+
+        			" FROM 16Hgjofi6dES5QLc3S1FVgdQ-f4eu0EMDhzqnEmM"+
+        			" WHERE Source='Library'";
+        libquery = encodeURIComponent(libquery);
+        var libgvizQuery = new google.visualization.Query('http://www.google.com/fusiontables/gvizdata?tq=' + libquery);
+        libgvizQuery.send(_parseData);
+        
+        
+        var hsaquery = "SELECT "+
+        			"name, "+
+        			"address, "+
+        			"phone, location,source"+
+        			" FROM 1ytGQ-GWvjvSdT1uX7HsRRK9szs84YZBL5i73E7U"+
+        			" WHERE source='HSA'";
+        hsaquery = encodeURIComponent(hsaquery);
+        var hsagvizQuery = new google.visualization.Query(
+            'http://www.google.com/fusiontables/gvizdata?tq=' + hsaquery);
+        hsagvizQuery.send(_parseData);
+        
+        
+        var foodbankquery = "SELECT "+
+        			"name, "+
+        			"address, "+
+        			"phone, location,source"+
+        			" FROM 1ytGQ-GWvjvSdT1uX7HsRRK9szs84YZBL5i73E7U"+
+        			" WHERE source='Second Harvest Food Bank'";
+        foodbankquery = encodeURIComponent(foodbankquery);
+        var foodbankgvizQuery = new google.visualization.Query(
+            'http://www.google.com/fusiontables/gvizdata?tq=' + foodbankquery);
+        foodbankgvizQuery.send(_parseData);
+	}
+	
+	// use geolocation to locate the user
+	function _locateUser()
+	{
+		overlay.style.display = "table";
+				
 		// callback object to hand off to geo locator object
 		var callBack = {
 			success:function(position)
 			{
 				latitude = position.coords.latitude;
 				longitude = position.coords.longitude;
-				_locationFound();
+				_reverseGeocodeLocation(latitude,longitude);
 			}
 			,
 			error:function(error)
@@ -77,95 +167,206 @@ var snaprmain = (function () {
 		else{
 			callBack.error({message:"Geolocation is not supported."});
 		}
-		
-		_initMap();
-		_initButtons();
-		
-		snaprmain.showLayer(LOCATION_TYPES[0]);
-		snaprmain.showLayer(LOCATION_TYPES[1]);
-		snaprmain.showLayer(LOCATION_TYPES[2]);
 	}
 	
-	function _initMap()
+	
+	function _initButtons()
 	{
-		// Render the map
-		Map = new TkMap({
-			domid:'map-canvas',
-			init:true,
-			lat:defaultLat,
-			lng:defaultLng,
-			styles:'grey',
-			zoom:11
-		});
+		location.addEventListener( "keypress" , _submitWithReturnKey , false );
+		addressButton.addEventListener( "mousedown" , _setLocationQuery , false );
+		foodbankcheck.addEventListener( "click" , _checkFoodBankCheck , false );
+		hsacheck.addEventListener( "click" , _checkHSACheck , false );
+		libcheck.addEventListener( "click" , _checkLibCheck , false );
+		currLocation.addEventListener( "click" , _currLocationClicked , false );
+	}
+	
+	// 'use current location' link clicked
+	function _currLocationClicked(e)
+	{
+		e.preventDefault();
+		_locateUser();
+	}
+	
+	function _submitWithReturnKey(event) 
+	{
+		if( event.keyCode == 13 )
+		{
+		  _setLocationQuery();
+		  location.blur();
+		}
+	}
+	
+	// reverse geocode the location based on lat/long and place in address field 
+	function _reverseGeocodeLocation(lat,lng)
+	{
+		var geocoder = new google.maps.Geocoder();
+		var latlng = new google.maps.LatLng(lat,lng);
 		
-		/*
-		// Get today's date
-		var d = new Date();
-		var date = d.getDate();
-		//Months are zero based
-		var month = d.getMonth() + 1;
-		var year = d.getFullYear();
-		// Get seven days from today
-		var d7 = new Date(d);
-		d7.setDate(d7.getDate()+7);
-		var date7 = d7.getDate();
-		//Months are zero based
-		var month7 = d7.getMonth() + 1;
-		var year7 = d7.getFullYear();
-		// Google FT likes dot-based dates
-		defaultWhere = "Date >= '"+year +'.'+ (month<=9?'0'+month:month) +'.'+ (date<=9?'0'+date:date)+"'";
-		*/
-		
-		// Create map layers the locations on the map
-		libraryLayer = new TkMapFusionLayer({
-			geo:'address',
-			map:Map.Map,
-			icon:LOCATION_TYPES[0].icon,
-			tableid:'1ZgxF1WxZtsawkLUmrXEgL1XR1WnSWtLBoNSEsf4',
-			where:"Source='Library'"
-		});
-		
-		hsaLayer = new TkMapFusionLayer({
-			geo:'address',
-			map:Map.Map,
-			icon:LOCATION_TYPES[1].icon,
-			tableid:'1ZgxF1WxZtsawkLUmrXEgL1XR1WnSWtLBoNSEsf4',
-			where:"Source='HSA'"
-		});
-		
-		foodBankLayer = new TkMapFusionLayer({
-			geo:'address',
-			map:Map.Map,
-			icon:LOCATION_TYPES[2].icon,
-			tableid:'1ZgxF1WxZtsawkLUmrXEgL1XR1WnSWtLBoNSEsf4',
-			where:"Source='Second Harvest Food Bank'"
-		});
-		
-		
-		var infoWindow = new google.maps.InfoWindow();
-		 
-		google.maps.event.addListener(libraryLayer.Layer, 'click', function(e) {
-          _windowControl(e, infoWindow, Map.Map);
-        });
-        
-        google.maps.event.addListener(hsaLayer.Layer, 'click', function(e) {
-          _windowControl(e, infoWindow, Map.Map);
-        });
-        
-        google.maps.event.addListener(foodBankLayer.Layer, 'click', function(e) {
-          _windowControl(e, infoWindow, Map.Map);
-        });
-		
-		/*
-		var RendererOptions = {
-			suppressInfoWindows: true,
-			polylineOptions: {
-				strokeColor:'#0954cf',
-				strokeWeight:'5',
-				strokeOpacity: '0.85'
+		geocoder.geocode({'latLng': latlng}, function(results, status) 
+		{
+		  if (status == google.maps.GeocoderStatus.OK) {
+			if (results[0]) 
+			{
+				overlay.style.display = "none";
+				location.value = results[0].formatted_address;
+				updateLocation(lat,lng);
 			}
+		  } 
+		  else 
+		  {
+			console.log("Geocoder failed due to: " + status);
+		  }
+		});
+	}
+	
+	function updateLocation(lat,lng)
+	{
+		_placeMarker(lat,lng);
+		_findClosestMarker(locationMarker);
+	}
+	
+	function _placeMarker(lat,lng)
+	{
+		var latlng = new google.maps.LatLng(lat,lng);
+		
+		if(locationMarker !== null)
+		{
+			locationMarker.setMap(null);
+		}
+		if(Circle !== null)
+		{
+			Circle.setMap(null);
+			Circle = null;
+		}
+		locationMarker = new google.maps.Marker({
+			position:latlng,
+			map: Map.Map,
+		});
+		Circle = new google.maps.Circle({
+			center:latlng,
+			clickable:false,
+			fillOpacity:0.075,
+			map:Map.Map,
+			radius:3000,
+			strokeWeight:1
+		});
+		Map.Map.panToBounds(Circle.getBounds());
+		Map.Map.fitBounds(Circle.getBounds());
+	}
+	
+	// convert degrees to radians
+	function _degreeToRadian(x) {return x*Math.PI/180;}
+	
+	// find the closest marker to the passed marker
+	function _findClosestMarker( toMarker ) {
+		var lat = toMarker.position.Ya;
+		var lng = toMarker.position.Za;
+				
+		var R = 6371; // radius of earth in km
+		var distances = [];
+		var closest = -1;
+		
+		var markers = [];
+		markers = markers.concat(libraryMarkers);
+		markers = markers.concat(hsaMarkers);
+		markers = markers.concat(foodbankMarkers);
+		
+		for( i=0;i<markers.length; i++ ) {
+			var mlat = markers[i].position.lat();
+			var mlng = markers[i].position.lng();
+			var dLat  = _degreeToRadian(mlat - lat);
+			var dLong = _degreeToRadian(mlng - lng);
+			var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+				Math.cos(_degreeToRadian(lat)) * Math.cos(_degreeToRadian(lat)) * Math.sin(dLong/2) * Math.sin(dLong/2);
+			var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+			var d = R * c;
+			distances[i] = d;
+			if ( closest == -1 || d < distances[closest] ) {
+				closest = i;
+			}
+		}
+		
+		//alert(markers[closest].title);
+		
+		_routeDirections(locationMarker,markers[closest]);
+	}
+	
+	// find the route between two markers
+	function _routeDirections(fromMarker,toMarker)
+	{
+		if (directionsDisplay != null) directionsDisplay.setMap(null);
+		var directionsService = new google.maps.DirectionsService();
+		directionsDisplay = new google.maps.DirectionsRenderer();
+		
+		directionsDisplay.setMap(Map.Map);
+		//directionsDisplay.setPanel(document.getElementById('panel'));
+		
+		var request = {
+			origin: fromMarker.position, 
+			destination: toMarker.position,
+			travelMode: google.maps.DirectionsTravelMode.DRIVING
 		};
-		*/
+		
+		directionsService.route(request, function(response, status) {
+			if (status == google.maps.DirectionsStatus.OK) {
+				directionsDisplay.setDirections(response);
+			}
+		});
+	}
+	
+     
+	function _createMarker(coordinate, name, address, phone, iconURL) {
+    	
+    	  var marker = new google.maps.Marker({
+            map: Map.Map,
+            position: coordinate,
+            title: name,
+            icon: new google.maps.MarkerImage(iconURL)
+          });
+          
+          google.maps.event.addListener(marker, 'click', function(event) {
+            infoWindow.setPosition(coordinate);
+            infoWindow.setContent(name + '<br>' + phone);
+            infoWindow.open(Map.Map);
+          });
+          
+          return marker;
+    }
+    
+    
+    function _parseData(response) {
+	  var numRows = response.getDataTable().getNumberOfRows();
+
+	  // For each row in the table, create a marker
+	  for (var i = 0; i < numRows; i++) {
+	  
+		var stringCoordinates = response.getDataTable().getValue(i, 3);
+		
+		var splitCoordinates = stringCoordinates.split(',');
+		var lat = splitCoordinates[1];
+		var lng = splitCoordinates[0];
+		
+		var coordinate = new google.maps.LatLng(lat, lng);
+		var name = response.getDataTable().getValue(i, 0);
+		var address = response.getDataTable().getValue(i, 1);
+		var phone = response.getDataTable().getValue(i, 2);
+		
+		var type = response.getDataTable().getValue(i, response.getDataTable().getNumberOfColumns()-1);
+			
+		if (type == "Library")
+		{		
+			libraryMarkers.push( _createMarker(coordinate, name, address, phone, 'http://google-maps-icons.googlecode.com/files/museum-historical.png') );
+		}
+		else if (type == "HSA")
+		{
+			hsaMarkers.push( _createMarker(coordinate, name, address, phone, 'http://google-maps-icons.googlecode.com/files/family.png') );
+		}
+		else if (type == "Second Harvest Food Bank")
+		{
+			foodbankMarkers.push( _createMarker(coordinate, name, address, phone, 'http://google-maps-icons.googlecode.com/files/grocery.png') );
+		}
+	  
+	  }
 	}
 	
 	// Open the info window at the clicked location
@@ -178,6 +379,7 @@ var snaprmain = (function () {
 		infoWindow.open(map);
 	}
 
+	// set the html formatting of the info window
 	function _formatInfoWindow(rows)
 	{	
 		var html = "";
@@ -189,14 +391,6 @@ var snaprmain = (function () {
 		return html;
 	}
 	
-	function _initButtons()
-	{
-		location.addEventListener( "keypress" , _submitWithReturnKey , false );
-		addressButton.addEventListener( "mousedown" , _setLocationQuery , false );
-		foodbankcheck.addEventListener( "click" , _checkFoodBankCheck , false );
-		hsacheck.addEventListener( "click" , _checkHSACheck , false );
-		libcheck.addEventListener( "click" , _checkLibCheck , false );
-	}
 	
 	function _setLocationQuery()
 	{
@@ -222,6 +416,7 @@ var snaprmain = (function () {
 						if (results[0])
 						{
 							Map.Map.panTo(results[0].geometry.location);
+							_findClosestMarker(locationMarker);
 							_placeMarker(results[0].geometry.location);
 						}
 						else
@@ -238,91 +433,18 @@ var snaprmain = (function () {
 		}
 	}
 
-	function _submitWithReturnKey(event) 
-	{
-    if( event.keyCode == 13 )
-    {
-      _setLocationQuery();
-      location.blur();
-    }
-	}
+	
 	
 	function _addressError()
 	{
 		message.innerHTML = 'We\'re sorry. We could not locate this address. Please doublecheck you\'ve entered your address correctly.';
 	}
 	
-	function _locationFound()
-	{
-		var geocoder = new google.maps.Geocoder();
-		var map;
-		var marker;
-		
-		var latlng = new google.maps.LatLng(latitude, longitude);
-		geocoder.geocode({'latLng': latlng}, function(results, status) {
-		  if (status == google.maps.GeocoderStatus.OK) {
-			if (results[0]) {
-				overlay.style.display = "none";
-			
-				location.value = results[0].formatted_address;
-				_placeMarker(latlng);
-			}
-		  } else {
-			console.log("Geocoder failed due to: " + status);
-		  }
-		});
-	}
-	
-	/**
-	 * Put the marker on the map
-	 */
-	function _placeMarker(latlng)
-	{
-		if(locationMarker !== null)
-		{
-			locationMarker.setMap(null);
-		}
-		if(Circle !== null)
-		{
-			Circle.setMap(null);
-			Circle = null;
-		}
-		locationMarker = new google.maps.Marker({
-			position:latlng,
-			map: Map.Map
-		});
-		Circle = new google.maps.Circle({
-			center:latlng,
-			clickable:false,
-			fillOpacity:0.075,
-			map:Map.Map,
-			radius:3000,
-			strokeWeight:1
-		});
-		Map.Map.panToBounds(Circle.getBounds());
-		Map.Map.fitBounds(Circle.getBounds());
-		//libraryLayer.showLayer({});
-		
-		_libraryLayerListener();
-		
-		/*$('#grp-find').show(750);
-		$('#grp-reset').show();
-		if(eventSelected === true)
-		{
-			$('#grp-cta').show(750);
-		}*/
-	}
-	
-	// listen for clicks on the spots of interest
-	function _libraryLayerListener()
-	{
-		
-	}
 	
 	function _onResize()
 	{
 		mapWrapper.style.height = window.innerHeight-120+"px";
-		if (Map)
+		if (Map && Circle)
 		{
 			Map.Map.panToBounds(Circle.getBounds());
 			Map.Map.fitBounds(Circle.getBounds());
@@ -350,13 +472,25 @@ var snaprmain = (function () {
 		switch(type)
 		{
 			case LOCATION_TYPES[0]:
-    			libraryLayer.showLayer();
+    			//libraryLayer.showLayer();
+    			for (var m in libraryMarkers)
+    			{
+    				libraryMarkers[m].setMap(Map.Map);
+    			}
     		break;
   			case LOCATION_TYPES[1]:
-				hsaLayer.showLayer();
+				//hsaLayer.showLayer();
+				for (var m in hsaMarkers)
+    			{
+    				hsaMarkers[m].setMap(Map.Map);
+    			}
 			break;
   			case LOCATION_TYPES[2]:
-				foodBankLayer.showLayer();
+				//foodBankLayer.showLayer();
+				for (var m in foodbankMarkers)
+    			{
+    				foodbankMarkers[m].setMap(Map.Map);
+    			}
 			break;
 		}
 	}
@@ -367,13 +501,25 @@ var snaprmain = (function () {
 		switch(type)
 		{
 			case LOCATION_TYPES[0]:
-    			libraryLayer.hideLayer();
+    			//libraryLayer.hideLayer();
+    			for (var m in libraryMarkers)
+    			{
+    				libraryMarkers[m].setMap(null);
+    			}
     		break;
   			case LOCATION_TYPES[1]:
-				hsaLayer.hideLayer();
+				//hsaLayer.hideLayer();
+				for (var m in hsaMarkers)
+    			{
+    				hsaMarkers[m].setMap(null);
+    			}
 			break;
   			case LOCATION_TYPES[2]:
-				foodBankLayer.hideLayer();
+				//foodBankLayer.hideLayer();
+				for (var m in foodbankMarkers)
+    			{
+    				foodbankMarkers[m].setMap(null);
+    			}
 			break;
 		}
 	}
