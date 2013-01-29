@@ -16,6 +16,7 @@ var snaprmain = (function () {
 	var hsacheck;
 	var libcheck;
 	var currLocation;
+	var infoWindow;
 	
 	var LOCATION_TYPES = [
 		{type: "library" , icon: "yellow"},
@@ -72,6 +73,7 @@ var snaprmain = (function () {
 	// initialize the Google map
 	function _initMap()
 	{
+		infoWindow = new google.maps.InfoWindow();
 		// Render the map
 		Map = new TkMap({
 			domid:'map-canvas',
@@ -234,6 +236,7 @@ var snaprmain = (function () {
 		{
 			locationMarker.setMap(null);
 		}
+		
 		locationMarker = new google.maps.Marker({
 			position:latlng,
 			map: Map.Map,
@@ -264,8 +267,8 @@ var snaprmain = (function () {
 	
 	// find the closest marker to the passed marker
 	function _findClosestMarker( toMarker ) {
-		var lat = toMarker.position.Ya;
-		var lng = toMarker.position.Za;
+		var lat = toMarker.position.lat();
+		var lng = toMarker.position.lng();
 				
 		var R = 6371; // radius of earth in km
 		var distances = [];
@@ -299,9 +302,13 @@ var snaprmain = (function () {
 	// find the route between two markers
 	function _routeDirections(fromMarker,toMarker)
 	{
-		if (directionsDisplay != null) directionsDisplay.setMap(null);
+		if (directionsDisplay != null) 
+		{
+			directionsDisplay.setMap(null);
+		}
+		
 		var directionsService = new google.maps.DirectionsService();
-		directionsDisplay = new google.maps.DirectionsRenderer();
+		directionsDisplay = new google.maps.DirectionsRenderer({suppressInfoWindows:true,suppressMarkers:true});
 		
 		directionsDisplay.setMap(Map.Map);
 		//directionsDisplay.setPanel(document.getElementById('panel'));
@@ -311,6 +318,10 @@ var snaprmain = (function () {
 			destination: toMarker.position,
 			travelMode: google.maps.DirectionsTravelMode.DRIVING
 		};
+		
+		infoWindow.setPosition(toMarker.position);
+        infoWindow.setContent(_formatInfoWindow(toMarker.info));
+    	infoWindow.open(Map.Map);
 		
 		directionsService.route(request, function(response, status) {
 			if (status == google.maps.DirectionsStatus.OK) {
@@ -326,19 +337,32 @@ var snaprmain = (function () {
             map: Map.Map,
             position: coordinate,
             title: name,
-            icon: new google.maps.MarkerImage(iconURL)
+            icon: new google.maps.MarkerImage(iconURL),
+            info: {Name:name,Address:address,Phone:phone}
           });
           
           google.maps.event.addListener(marker, 'click', function(event) {
             infoWindow.setPosition(coordinate);
-            infoWindow.setContent(name + '<br>' + phone);
+            infoWindow.setContent(_formatInfoWindow({Name:name,Address:address,Phone:phone}));
             infoWindow.open(Map.Map);
           });
           
           return marker;
     }
-    
-    
+	
+	// set the html formatting of the info window
+	function _formatInfoWindow(rows)
+	{	
+		var html = "";
+		for (var row in rows)
+		{
+			html += "<div><b>" + row + ":</b> " + rows[row] + "</div>";
+		}
+		
+		return html;
+	}
+
+
     function _parseData(response) {
 	  var numRows = response.getDataTable().getNumberOfRows();
 
@@ -374,32 +398,10 @@ var snaprmain = (function () {
 	  }
 	}
 	
-	// Open the info window at the clicked location
-	function _windowControl(e, infoWindow, map) {
-		infoWindow.setOptions({
-		content: _formatInfoWindow(e.row),
-		position: e.latLng,
-		pixelOffset: e.pixelOffset
-		});
-		infoWindow.open(map);
-	}
-
-	// set the html formatting of the info window
-	function _formatInfoWindow(rows)
-	{	
-		var html = "";
-		for (var row in rows)
-		{
-			html += "<div>" + row + " : " + rows[row].value + "</div>";
-		}
-		
-		return html;
-	}
-	
 	
 	// location changed
 	function _setLocationQuery()
-	{
+	{	
 		if(location.value.length > 0)
 		{
 			if(locationMarker !== null)
@@ -422,8 +424,10 @@ var snaprmain = (function () {
 						if (results[0])
 						{
 							Map.Map.panTo(results[0].geometry.location);
+							var lat = results[0].geometry.location.lat();
+							var lng = results[0].geometry.location.lng();
+							_placeMarker(lat,lng);
 							_findClosestMarker(locationMarker);
-							_placeMarker(results[0].geometry.location);
 						}
 						else
 						{
