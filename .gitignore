@@ -1,2 +1,3 @@
-
+*.DS_Store
 htdocs/js/.DS_Store
+htdocs/.DS_Store
