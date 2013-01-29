@@ -275,28 +275,36 @@ var snaprmain = (function () {
 		var closest = -1;
 		
 		var markers = [];
-		markers = markers.concat(libraryMarkers);
-		markers = markers.concat(hsaMarkers);
-		markers = markers.concat(foodbankMarkers);
+		if (libcheck.checked) markers = markers.concat(libraryMarkers);
+		if (hsacheck.checked) markers = markers.concat(hsaMarkers);
+		if (foodbankcheck.checked) markers = markers.concat(foodbankMarkers);
 		
-		for( i=0;i<markers.length; i++ ) {
-			var mlat = markers[i].position.lat();
-			var mlng = markers[i].position.lng();
-			var dLat  = _degreeToRadian(mlat - lat);
-			var dLong = _degreeToRadian(mlng - lng);
-			var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-				Math.cos(_degreeToRadian(lat)) * Math.cos(_degreeToRadian(lat)) * Math.sin(dLong/2) * Math.sin(dLong/2);
-			var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-			var d = R * c;
-			distances[i] = d;
-			if ( closest == -1 || d < distances[closest] ) {
-				closest = i;
+		var markerLen = markers.length;
+		
+		if (markerLen >0)
+		{
+			for( i=0;i<markerLen; i++ ) {
+				var mlat = markers[i].position.lat();
+				var mlng = markers[i].position.lng();
+				var dLat  = _degreeToRadian(mlat - lat);
+				var dLong = _degreeToRadian(mlng - lng);
+				var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+					Math.cos(_degreeToRadian(lat)) * Math.cos(_degreeToRadian(lat)) * Math.sin(dLong/2) * Math.sin(dLong/2);
+				var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+				var d = R * c;
+				distances[i] = d;
+				if ( closest == -1 || d < distances[closest] ) {
+					closest = i;
+				}
 			}
+				
+			_routeDirections(locationMarker,markers[closest]);
 		}
-		
-		//alert(markers[closest].title);
-		
-		_routeDirections(locationMarker,markers[closest]);
+		else
+		{
+			directionsDisplay.setMap(null);
+			infoWindow.close();
+		}
 	}
 	
 	// find the route between two markers
@@ -345,6 +353,7 @@ var snaprmain = (function () {
             infoWindow.setPosition(coordinate);
             infoWindow.setContent(_formatInfoWindow({Name:name,Address:address,Phone:phone}));
             infoWindow.open(Map.Map);
+            _routeDirections(locationMarker,marker);
           });
           
           return marker;
@@ -503,6 +512,8 @@ var snaprmain = (function () {
     			}
 			break;
 		}
+		
+		updateLocation(latitude, longitude);
 	}
 	
 	snaprmain.hideLayer = function(type)
@@ -532,6 +543,8 @@ var snaprmain = (function () {
     			}
 			break;
 		}
+		
+		updateLocation(latitude, longitude);
 	}
 
 // return internally scoped snaprmain var as value of globally scoped snaprmain object
