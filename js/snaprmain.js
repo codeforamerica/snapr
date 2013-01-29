@@ -172,8 +172,9 @@ var snaprmain = (function () {
 	
 	function _initButtons()
 	{
-		location.addEventListener( "keypress" , _submitWithReturnKey , false );
-		addressButton.addEventListener( "mousedown" , _setLocationQuery , false );
+		location.addEventListener( "keypress" , _submitWithReturnKey , false ); // hit return in location field
+		addressButton.addEventListener( "mousedown" , _setLocationQuery , false ); // hit search button
+		
 		foodbankcheck.addEventListener( "click" , _checkFoodBankCheck , false );
 		hsacheck.addEventListener( "click" , _checkHSACheck , false );
 		libcheck.addEventListener( "click" , _checkLibCheck , false );
@@ -233,15 +234,18 @@ var snaprmain = (function () {
 		{
 			locationMarker.setMap(null);
 		}
+		locationMarker = new google.maps.Marker({
+			position:latlng,
+			map: Map.Map,
+		});
+		
+		/*
 		if(Circle !== null)
 		{
 			Circle.setMap(null);
 			Circle = null;
 		}
-		locationMarker = new google.maps.Marker({
-			position:latlng,
-			map: Map.Map,
-		});
+		
 		Circle = new google.maps.Circle({
 			center:latlng,
 			clickable:false,
@@ -252,6 +256,7 @@ var snaprmain = (function () {
 		});
 		Map.Map.panToBounds(Circle.getBounds());
 		Map.Map.fitBounds(Circle.getBounds());
+		*/
 	}
 	
 	// convert degrees to radians
@@ -392,6 +397,7 @@ var snaprmain = (function () {
 	}
 	
 	
+	// location changed
 	function _setLocationQuery()
 	{
 		if(location.value.length > 0)
