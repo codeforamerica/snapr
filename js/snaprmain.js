@@ -285,6 +285,8 @@ var snaprmain = (function () {
 		var closest = -1;
 		
 		var markers = [];
+		
+		// don't include markers that are unchecked in the calculation
 		if (libcheck.checked) markers = markers.concat(libraryMarkers);
 		if (hsacheck.checked) markers = markers.concat(hsaMarkers);
 		if (foodbankcheck.checked) markers = markers.concat(foodbankMarkers);
@@ -349,19 +351,19 @@ var snaprmain = (function () {
 	}
 	
      
-	function _createMarker(coordinate, name, address, phone, iconURL) {
+	function _createMarker(coordinate, iwdata, iconURL) {
     	
     	  var marker = new google.maps.Marker({
             map: Map.Map,
             position: coordinate,
             title: name,
             icon: new google.maps.MarkerImage(iconURL),
-            info: {Name:name,Address:address,Phone:phone}
+            info: iwdata
           });
           
           google.maps.event.addListener(marker, 'click', function(event) {
             infoWindow.setPosition(coordinate);
-            infoWindow.setContent(_formatInfoWindow({Name:name,Address:address,Phone:phone}));
+            infoWindow.setContent(_formatInfoWindow(iwdata));
             infoWindow.open(Map.Map);
             _routeDirections(locationMarker,marker);
           });
@@ -399,19 +401,21 @@ var snaprmain = (function () {
 		var address = response.getDataTable().getValue(i, 1);
 		var phone = response.getDataTable().getValue(i, 2);
 		
+		var iwdata = {Name:name,Address:address,Phone:phone}; // data for the marker's infowindow
+		
 		var type = response.getDataTable().getValue(i, response.getDataTable().getNumberOfColumns()-1);
 			
 		if (type == "Library")
 		{		
-			libraryMarkers.push( _createMarker(coordinate, name, address, phone, 'http://google-maps-icons.googlecode.com/files/museum-historical.png') );
+			libraryMarkers.push( _createMarker(coordinate, iwdata, 'http://google-maps-icons.googlecode.com/files/museum-historical.png') );
 		}
 		else if (type == "HSA")
 		{
-			hsaMarkers.push( _createMarker(coordinate, name, address, phone, 'http://google-maps-icons.googlecode.com/files/family.png') );
+			hsaMarkers.push( _createMarker(coordinate, iwdata, 'http://google-maps-icons.googlecode.com/files/family.png') );
 		}
 		else if (type == "Second Harvest Food Bank")
 		{
-			foodbankMarkers.push( _createMarker(coordinate, name, address, phone, 'http://google-maps-icons.googlecode.com/files/grocery.png') );
+			foodbankMarkers.push( _createMarker(coordinate, iwdata, 'http://google-maps-icons.googlecode.com/files/grocery.png') );
 		}
 	  
 	  }
