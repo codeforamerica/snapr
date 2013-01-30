@@ -83,6 +83,14 @@ var snaprmain = (function () {
 			styles:'grey',
 			zoom:11
 		});
+		
+		google.maps.event.addListener(Map.Map , "click" , _moveOrigin , false);
+	}
+	
+	// move the origin address
+	function _moveOrigin(event)
+	{
+		_reverseGeocodeLocation( event.latLng.lat() , event.latLng.lng() );
 	}
 	
 	// initialize the markers
@@ -224,6 +232,8 @@ var snaprmain = (function () {
 	
 	function updateLocation(lat,lng)
 	{
+		latitude = lat;
+		longitude = lng;
 		_placeMarker(lat,lng);
 		_findClosestMarker(locationMarker);
 	}
