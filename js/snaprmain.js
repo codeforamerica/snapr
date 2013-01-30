@@ -35,6 +35,7 @@ var snaprmain = (function () {
 	var directionsDisplay;
 	
 	// arrays of markers
+	var numMarkers = 0;
 	var libraryMarkers = [];
 	var hsaMarkers = [];
 	var foodbankMarkers = [];
@@ -353,12 +354,19 @@ var snaprmain = (function () {
      
 	function _createMarker(coordinate, iwdata, iconURL) {
     	
+    		numMarkers+=1; // increment number of markers
+    		
     	  var marker = new google.maps.Marker({
             map: Map.Map,
             position: coordinate,
             title: name,
             icon: new google.maps.MarkerImage(iconURL),
+            zIndex:numMarkers,
             info: iwdata
+          });
+          
+          google.maps.event.addListener(marker, 'mouseover', function(event) {
+          	marker.setZIndex(numMarkers);
           });
           
           google.maps.event.addListener(marker, 'click', function(event) {
