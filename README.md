@@ -7,7 +7,13 @@ Installation
 ------------
 
 Snapr is an HTML/Javasvript application with a Google Maps display UI.
-Open `htdocs/index.html` in your web browser to view Snapr.
+
+ 1. Clone this repository to your computer:
+
+    `git clone git://github.com/codeforamerica/snapr.git snapr`
+
+ 2. Open the file `snapr/htdocs/index.html` in your web browser.
+
 
 Contact & Contribute
 --------------------
